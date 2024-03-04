@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to My Great Project</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+{% extends "baseTemplate_navbar.html" %}
+{% block content %}
+    <body>
+      <div class="container">
+        <h1>Welcome to My Great Project</h1>
+        <div class="row">
+          <div class="col-md-6">
+            <h2>About Us</h2>
+            <p>We are excited to introduce you to our amazing project that aims to revolutionize the way you interact with technology.</p>
+              <img src="{{ url_for('static', filename="logo.jpeg") }}" height="200" alt="Company Logo" style="border-radius: 30%">
+          </div>
+          <div class="col-md-6">
+            <h2>Project Details</h2>
+            <p>Our project utilizes cutting-edge technology to provide innovative solutions that cater to your needs.</p>
+            <p>Parameters sent from Flask Python script:</p>
+            <ul>
+              <li>Parameter 1: {{ parameters.parameter1 }}</li>
+              <li>Parameter 2: {{ parameters.parameter2 }}</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <h3>Why Choose Us?</h3>
+            <p>Our project offers unparalleled features and benefits that set us apart from the rest. Join us on this incredible journey!</p>
+          </div>
+        </div>
+      </div>
+    </body>
+{% endblock %}
+</html>
