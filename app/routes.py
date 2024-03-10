@@ -1,12 +1,18 @@
 from app import app
-from flask import render_template
-from flask import abort
+from app.forms import SimpleForm
+from flask import abort, render_template, redirect, url_for, session
 
 
 @app.route("/")
 def index():
+    user_data = {'name': session.get('name','blank'),
+                 'surname': session.get('surname','blank'),
+                 'email': session.get('email','blank'),
+                 'codingExperience': session.get('codingExperience','blank'),
+                 'setAvatar': session.get('setAvatar',False)}
     parameters = {"parameter1": "Весь текст написан на английском, а этот на русском",
-                  "parameter2": "Вот, я смог повторить отправку параметров из routes в index.html"}
+                  "parameter2": "Вот, я смог повторить отправку параметров из routes в index.html",
+                  "userData": user_data}
     return render_template("index.html", parameters=parameters)
 
 
@@ -24,3 +30,16 @@ def ops():
 @app.errorhandler(400)
 def error_request(e):
     return render_template("400.html"), 400
+
+
+@app.route('/form', methods=['GET','POST'])
+def test_form():
+    form = SimpleForm()
+    if form.validate_on_submit():
+        session['name'] = form.name.data
+        session['surname'] = form.surname.data
+        session['email'] = form.email.data
+        session['codingExperience'] = form.codingExperience.data
+        session['setAvatar'] = form.setAvatar.data
+        return redirect(url_for('index'))
+    return render_template('formTemplate.html', form=form)

@@ -5,11 +5,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Welcome to My Great Project</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+     .card{
+        position: absolute;
+        right:10px;
+        top: 70px;
+        width: 400px;
+        border: none;
+        border-radius: 10px;
+        background-color:#B3E5FC;
+      }
+  </style>
+
 </head>
 {% extends "baseTemplate_navbar.html" %}
 {% block content %}
     <body>
       <div class="container">
+        <div class="container mt-5 d-flex justify-content-center">
+            <div class="card p-3">
+                <div class="d-flex align-items-center">
+                    <div class="image">
+                <img src="
+                    {% if parameters.userData.setAvatar %}
+                        {{ url_for('static', filename="avatar.jpg") }}
+                    {% else %}
+                        {{ url_for('static', filename="noAvatar.png") }}{% endif %}"
+                class="rounded" width="155" >
+                </div>
+                <div class="ml-3 w-100">
+                   <h4 class="mb-0 mt-0">{{ parameters.userData.name }}</h4>
+                   <span>{{ parameters.userData.surname }}</span>
+
+                   <div class="p-2 mt-2 bg-primary d-flex justify-content-between rounded text-white stats">
+                       <p>Стаж в IT:</p>
+                       <p>{{ parameters.userData.codingExperience }}</p>
+                   </div>
+                   <div class="button mt-2 d-flex flex-row align-items-center">
+                    <button class="btn btn-sm btn-outline-primary w-100">Chat</button>
+                    <button class="btn btn-sm btn-primary w-100 ml-2">Follow</button>
+                   </div>
+                </div>
+                </div>
+            </div>
+         </div>
         <h1>Welcome to My Great Project</h1>
         <div class="row">
           <div class="col-md-6">
@@ -19,7 +58,7 @@
           </div>
           <div class="col-md-6">
             <h2>Project Details</h2>
-            <p>Our project utilizes cutting-edge technology to provide innovative solutions that cater to your needs.</p>
+            <p>Our project utilizes cutting-edge <br> technology to provide innovative solutions that cater to your needs.</p>
             <p>Parameters sent from Flask Python script:</p>
             <ul>
               <li>Parameter 1: {{ parameters.parameter1 }}</li>
