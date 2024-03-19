@@ -1,14 +1,17 @@
 from flask_wtf import FlaskForm
 from wtforms import *
 from wtforms.validators import DataRequired
-
+from models import Company
+from app import flask_app
 
 class SimpleForm(FlaskForm):
-    name = StringField("Имя:", validators=[DataRequired()])
-    surname = StringField("Фамилия:", validators=[DataRequired()])
-    email = EmailField("Почта", validators=[DataRequired()])
-    codingExperience = SelectField("Стаж в IT",
-                                   choices=['Никогда не работал', 'Меньше года', 'От 1 до 5 лет', 'Более 5 лет'])
-    setAvatar = BooleanField()
+    job_name = StringField("Работа:", validators=[DataRequired()])
+    description = StringField("Описание:", validators=[DataRequired()])
+    salary = IntegerField("Зарплата:", validators=[DataRequired()])
+    location = StringField("Место:", validators=[DataRequired()])
+    website = StringField("Сайт:", validators=[DataRequired()])
+    with flask_app.app_context():
+        companies = Company.query.all()
+    company = SelectField("Компания", choices=companies)
 
     submit = SubmitField("Отправить")
