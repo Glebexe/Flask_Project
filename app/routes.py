@@ -1,7 +1,9 @@
 from app import flask_app
 from app.forms import SimpleForm
 from flask import abort, render_template, redirect, url_for, session
+from flask_mail import Message
 from models import *
+from . import mail
 from app import db
 
 
@@ -29,6 +31,18 @@ def ops():
 def error_request(e):
     return render_template("400.html"), 400
 
+@flask_app.route('/send_email')
+def email():
+    send_mail('ihtiornis2020@gmail.com', 'My email sent from Flask app', 'mail_text')
+    return redirect(url_for('index'))
+
+def send_mail(to, subject, template, **kwargs):
+    msg = Message(subject,
+                  sender=flask_app.config['MAIL_USERNAME'],
+                  recipients=[to])
+    msg.body = render_template(template+'.txt', **kwargs)
+    # msg.html = render_template(template+'.html', **kwargs)
+    mail.send(msg)
 
 @flask_app.route('/form', methods=['GET','POST'])
 def test_form():
@@ -47,3 +61,4 @@ def test_form():
         db.session.commit()
         return redirect(url_for('index'))
     return render_template('formTemplate.html', form=form)
+
