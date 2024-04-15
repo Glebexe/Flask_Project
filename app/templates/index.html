@@ -76,7 +76,7 @@
 
         <div class="col-md-4 mt-4 mt-sm-0 d-none d-md-block">
             <div class="text-center text-md-end">
-                <a href="{{url_for('email')}}" class="text-primary">Отправить письмо <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right fea icon-sm"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+                <a href="{{url_for('main.email')}}" class="text-primary">Отправить письмо <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right fea icon-sm"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
             </div>
         </div><!--end col-->
     </div><!--end row-->
@@ -105,11 +105,13 @@
              </div>
         </div><!--end col-->
         {% endfor %}
-
-        <div class="col-12 mt-4 pt-2 d-block d-md-none text-center">
-            <a href="#" class="btn btn-primary">View more Jobs <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right fea icon-sm"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
-        </div><!--end col-->
     </div><!--end row-->
+
+    {% if current_user.is_authenticated and current_user.role_id == 1%}
+        <div class="text-center mt-5">
+            <a href="{{url_for('main.job_form')}}" class="btn btn-info">Добавить карточку</a>
+        </div>
+    {% endif %}
 </div>
 {% endblock %}
 </html>

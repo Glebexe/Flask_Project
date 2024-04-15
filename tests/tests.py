@@ -11,11 +11,6 @@ class BasicTestCase(unittest.TestCase):
         self.app_context.push()
         db.create_all()
 
-    def tearDown(self):
-        db.session.remove()
-        db.drop_all()
-        self.app_context.pop()
-
     def test_app_exit(self):
         self.assertFalse(current_app is None)
 
