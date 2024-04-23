@@ -1,13 +1,17 @@
+from authlib.integrations.flask_client import OAuth
 from flask import Flask
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap4
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
 from config import config
+from flask_migrate import Migrate
 
 bootstrap = Bootstrap4()
 db = SQLAlchemy()
 mail = Mail()
+oauth = OAuth()
+migrate = Migrate()
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
 
@@ -23,6 +27,8 @@ def create_app(config_name='default'):
     bootstrap.init_app(flask_app)
     db.init_app(flask_app)
     mail.init_app(flask_app)
+    migrate.init_app(flask_app, db)
+    oauth.init_app(flask_app)
 
     from .main import main as main_bluprint
     flask_app.register_blueprint(main_bluprint)
