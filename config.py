@@ -10,6 +10,7 @@ class Config:
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME') or 'glebbedakov@gmail.com'
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or 'zgdf kuwy mukt awph'
     SQLALCHEMY_TRACK_MODIFICATIONS = True
+    FLASKY_ADMIN = 'test@test.ru'
 
     @staticmethod
     def init_app(app):

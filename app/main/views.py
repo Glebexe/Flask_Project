@@ -10,6 +10,7 @@ from .forms import *
 from .. import mail
 from .. import auth
 from flask_login import login_required
+from ..decorators import admin_required, permission_required
 
 @main.route("/")
 def index():
@@ -89,3 +90,17 @@ def sign_up_in_form():
 @login_required
 def secret():
     return 'My secret'
+
+
+@main.route('/admin')
+@login_required
+@admin_required
+def for_admin():
+    return "For admin"
+
+
+@main.route('/moderate')
+@login_required
+@permission_required(Permission.MODERATE)
+def for_moderator():
+    return "For moderator"
