@@ -1,6 +1,6 @@
-from flask_wtf import FlaskForm
 from wtforms import *
 from wtforms.validators import DataRequired
+from flask_wtf import FlaskForm
 from app.models import Company
 
 
@@ -16,7 +16,8 @@ class JobForm(FlaskForm):
 
     submit = SubmitField("Отправить")
 
-class Sign_up_in_Form(FlaskForm):
+
+class SignUpInForm(FlaskForm):
     username = StringField("Введите имя пользователя")
     password = PasswordField("Введите пароль")
 

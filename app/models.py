@@ -1,11 +1,9 @@
-from flask_login import UserMixin
-from werkzeug.security import generate_password_hash, check_password_hash
-
 from . import db
 from . import login_manager
-
 from flask_login import UserMixin, AnonymousUserMixin
 from authlib.jose import JsonWebSignature
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 class Company(db.Model):
     __tablename__ = 'companies'
@@ -16,6 +14,8 @@ class Company(db.Model):
 
     def __repr__(self):
         return self.company_name
+
+
 class Job(db.Model):
 
     __tablename__ = 'jobs'
@@ -90,7 +90,6 @@ class Role(db.Model):
         self.permissions = 0
 
 
-
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -155,8 +154,10 @@ class AnonymousUser(AnonymousUserMixin):
     def is_admin(self):
         return False
 
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
 
 login_manager.anonymous_user = AnonymousUser

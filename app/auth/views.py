@@ -1,22 +1,31 @@
-from flask import render_template, redirect, request, flash, url_for
+from app import mail
+from threading import Thread
 from flask_mail import Message
+from flask import render_template, redirect, request, flash, url_for
+from flask_login import login_user, login_required, logout_user, current_user
 
 from . import auth
 from .forms import LoginForm, RegistrationForm
 from .. import db
 from ..models import User
-from flask_login import login_user, login_required, logout_user, current_user
-from threading import Thread
-from app import mail
+
 
 @auth.before_app_request
 def before_request():
+    """
+    :return: auth.unconfirmed page if user is unauthorized
+    """
     if current_user.is_authenticated and not current_user.confirmed and request.blueprint != 'auth'\
        and request.endpoint != 'static':
         return redirect(url_for('auth.unconfirmed'))
 
-@auth.route('/login',methods=['GET','POST'])
+
+@auth.route('/login', methods=['GET', 'POST'])
 def login():
+    """
+    Login data processing
+    :return: login form
+    """
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
@@ -30,8 +39,12 @@ def login():
     return render_template("auth/login.html", form=form)
 
 
-@auth.route('/register',methods=['GET','POST'])
+@auth.route('/register', methods=['GET', 'POST'])
 def register():
+    """
+    Registration data processing
+    :return: registration form
+    """
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(email=form.email.data,
@@ -48,6 +61,10 @@ def register():
 @auth.route('/logout')
 @login_required
 def logout():
+    """
+    Logout user
+    :return: main page
+    """
     logout_user()
     flash('You are logout')
     return redirect(url_for('main.index'))
@@ -56,6 +73,11 @@ def logout():
 @auth.route("/confirm/<token>")
 @login_required
 def confirm(token):
+    """
+    Registration confirmation
+    :param token: unique generated confirmation token
+    :return: main page
+    """
     if current_user.confirmed:
         return redirect(url_for('main.index'))
     if current_user.confirm(token[2:]):
@@ -68,16 +90,34 @@ def confirm(token):
 
 @auth.route("/unconfirmed")
 def unconfirmed():
+    """
+    :return: unconfirmed page if user unconfirmed, else main page
+    """
     if current_user.is_anonymous or current_user.confirmed:
         return redirect(url_for('main.index'))
     return render_template('auth/unconfirmed.html')
 
+
 def send_confirm(user, token):
+    """
+    Form data for mail send
+    :param user:
+    :param token: unique generated confirmation token
+    :return: main page
+    """
     send_mail(user.email, 'Confirm your account', 'auth/confirm', user=user, token=token)
     redirect(url_for('main.index'))
 
 
 def send_mail(to, subject, template, **kwargs):
+    """
+    Send mail to user for confirmation account
+    :param to: recipient
+    :param subject: mail subject
+    :param template: mail template
+    :param kwargs:
+    :return: thread of mail send
+    """
     msg = Message(subject,
                   sender='glebbedakov@gmail.com',
                   recipients=[to])
@@ -90,6 +130,13 @@ def send_mail(to, subject, template, **kwargs):
     thread.start()
     return thread
 
+
 def send_async_email(app, msg):
+    """
+    Asynchronously send email
+    :param app:
+    :param msg: email message
+    :return:
+    """
     with app.app_context():
         mail.send(msg)

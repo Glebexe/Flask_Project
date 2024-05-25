@@ -1,5 +1,4 @@
 import unittest
-
 from flask import current_app
 from app import create_app, db
 
@@ -16,4 +15,3 @@ class BasicTestCase(unittest.TestCase):
 
     def test_app_isTesting(self):
         self.assertTrue(current_app.config['TESTING'])
-

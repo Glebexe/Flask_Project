@@ -1,11 +1,11 @@
-from authlib.integrations.flask_client import OAuth
+from config import config
 from flask import Flask
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap4
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
-from config import config
 from flask_migrate import Migrate
+from authlib.integrations.flask_client import OAuth
 
 bootstrap = Bootstrap4()
 db = SQLAlchemy()
@@ -35,6 +35,5 @@ def create_app(config_name='default'):
 
     from .auth import auth as auth_blueprint
     flask_app.register_blueprint(auth_blueprint, url_prefix='/auth')
-
 
     return flask_app

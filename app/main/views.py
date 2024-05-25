@@ -1,19 +1,21 @@
-# from app.main.forms import SimpleForm
-from flask import abort, render_template, redirect, url_for
-from flask_mail import Message
-from flask import current_app
-from app.models import *
 from app import db
-from app import config
+from app.models import *
+from flask_mail import Message
+from flask_login import login_required
+from flask import abort, render_template, redirect, url_for, current_app
+
 from . import main
 from .forms import *
 from .. import mail
-from .. import auth
-from flask_login import login_required
 from ..decorators import admin_required, permission_required
+
 
 @main.route("/")
 def index():
+    """
+    The main page with job cards
+    :return: main page
+    """
     objs = Job.query.all()
     jobs = []
     for job in objs:
@@ -23,6 +25,11 @@ def index():
 
 @main.route("/hi/<name>")
 def hello_user(name):
+    """
+    Greeting page
+    :param name:
+    :return: greeting page
+    """
     return '<body style="font-family: Arial, sans-serif; background-color: #f0f0f0; text-align: center;">' \
            ' <h1 style="color: #333;">Welcome to My Flask Page!</h1>' \
            '<p style="color: #666;">Hello, <span style="font-weight: bold;">{}</span>!</p></body>'.format(name)
@@ -30,25 +37,45 @@ def hello_user(name):
 
 @main.route("/ops")
 def ops():
+    """
+    Test error
+    :return: error 400
+    """
     return abort(400)
 
 
 @main.route('/send_email')
 def email():
+    """
+    Send mail to the user
+    :return: main page
+    """
     send_mail('ihtiornis2020@gmail.com', 'My email sent from Flask app', 'mail_text')
     return redirect(url_for('main.index'))
 
 
 def send_mail(to, subject, template, **kwargs):
+    """
+    Forms message to send
+    :param to:
+    :param subject:
+    :param template:
+    :param kwargs:
+    :return:
+    """
     msg = Message(subject,
                   sender=current_app.config['MAIL_USERNAME'],
                   recipients=[to])
     msg.body = render_template(template+'.txt', **kwargs)
-    # msg.html = render_template(template+'.html', **kwargs)
     mail.send(msg)
+
 
 @main.route('/job_form', methods=['GET','POST'])
 def job_form():
+    """
+    Process data from form and add new job
+    :return: form for new job
+    """
     form = JobForm()
     if form.validate_on_submit():
         job = Job.query.filter_by(job_name=form.job_name.data).first()
@@ -68,9 +95,14 @@ def job_form():
         return redirect(url_for('main.index'))
     return render_template('formTemplate.html', form=form)
 
+
 @main.route('/sign_up_in', methods=['GET','POST'])
 def sign_up_in_form():
-    form = Sign_up_in_Form()
+    """
+    User login form
+    :return: main page from if data is valid, else form page again
+    """
+    form = SignUpInForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if not user:
