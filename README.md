@@ -5,7 +5,7 @@
 Welcome to the project! It is a tool designed to assemble and aggregate vacancies from various websites and platforms in one place.
 The goal of the project is to facilitate the job search process by providing users with convenient access to a wide range of vacancies, instead of regularly checking dozens or hundreds of job sites.
     <br />
-    <a href="./Demo.mp4" download>View Demo</a>
+    <a href="demo.md">View Demo</a>
     ·
     <a href="https://github.com/Glebexe/Flask_Project/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
     ·
