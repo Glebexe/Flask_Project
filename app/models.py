@@ -1,3 +1,5 @@
+from flask_admin.contrib.sqla import ModelView
+
 from . import db
 from . import login_manager
 from flask_login import UserMixin, AnonymousUserMixin
@@ -10,14 +12,13 @@ class Company(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     company_name = db.Column(db.String(200))
     description = db.Column(db.String(2000))
-    jobs = db.relationship('Job', backref='Company')
+    jobs = db.relationship('Job', back_populates='company')
 
-    def __repr__(self):
+    def __str__(self):
         return self.company_name
 
 
 class Job(db.Model):
-
     __tablename__ = 'jobs'
     id = db.Column(db.Integer, primary_key=True)
     job_name = db.Column(db.String(200))
@@ -25,10 +26,15 @@ class Job(db.Model):
     salary = db.Column(db.Integer)
     location = db.Column(db.String(200))
     website = db.Column(db.String(200))
-    company = db.Column(db.Integer, db.ForeignKey('companies.id'))
+    company_id = db.Column(db.Integer, db.ForeignKey('companies.id'))
+    company = db.relationship('Company', back_populates='jobs')
 
-    def __repr__(self):
+    def __str__(self):
         return self.job_name
+
+
+class JobView(ModelView):
+    column_list = ['job_name', 'description', 'salary', 'location', 'website', 'company']
 
 
 class Permission:
@@ -43,17 +49,17 @@ class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(60), unique=True)
-    users = db.relationship('User', backref='role')
+    users = db.relationship('User', back_populates='role')
     default = db.Column(db.Boolean, default=False, index=True)
     permissions = db.Column(db.Integer)
 
     def __int__(self, **kwargs):
-        super(Role,self).__init__(**kwargs)
+        super(Role, self).__init__(**kwargs)
         if self.permissions is None:
             self.permissions = 0
 
-    def __repr__(self):
-        return '<Role %r>' % self.name
+    def __str__(self):
+        return self.name
 
     @staticmethod
     def insert_roles():
@@ -87,7 +93,7 @@ class Role(db.Model):
             self.permissions -= perm
 
     def reset_permission(self):
-        self.permissions = 0
+        self.permissions = 1
 
 
 class User(db.Model, UserMixin):
@@ -97,6 +103,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(60), unique=True, index=True)
     password_hash = db.Column(db.String(128))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+    role = db.relationship('Role', back_populates='users')
     confirmed = db.Column(db.Boolean, default=False)
 
     def __init__(self, **kwargs):
@@ -134,7 +141,7 @@ class User(db.Model, UserMixin):
 
     @property
     def password(self):
-        raise AttributeError('password not enable for read')
+        return self.password_hash
 
     @password.setter
     def set_password(self, password):
@@ -145,6 +152,10 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return '<User %r>' % self.username
+
+
+class UserView(ModelView):
+    column_list = ['username', 'email', 'role', 'confirmed']
 
 
 class AnonymousUser(AnonymousUserMixin):

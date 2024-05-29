@@ -1,7 +1,7 @@
 from app import mail
 from threading import Thread
 from flask_mail import Message
-from flask import render_template, redirect, request, flash, url_for
+from flask import render_template, redirect, request, flash, url_for, current_app
 from flask_login import login_user, login_required, logout_user, current_user
 
 from . import auth
@@ -30,7 +30,7 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user is not None and user.password_verify(form.password.data):
-            login_user(user, form.remember_me.data)
+            login_user(user)
             next = request.args.get("next")
             if next is None or not next.startswith('/'):
                 next = url_for('main.index')
@@ -49,13 +49,13 @@ def register():
     if form.validate_on_submit():
         user = User(email=form.email.data,
                     username=form.username.data)
-        user.set_password(form.password.data)
+        user.set_password = form.password.data
         db.session.add(user)
         db.session.commit()
         token = user.generate_confirmation_token()
         send_confirm(user, token)
         return redirect(url_for('auth.login'))
-    return render_template("auth/registration.html",form=form)
+    return render_template("auth/registration.html", form=form)
 
 
 @auth.route('/logout')
@@ -119,12 +119,13 @@ def send_mail(to, subject, template, **kwargs):
     :return: thread of mail send
     """
     msg = Message(subject,
-                  sender='glebbedakov@gmail.com',
+                  sender=current_app.config['MAIL_USERNAME'],
                   recipients=[to])
     try:
         msg.html = render_template(template+'.html', **kwargs)
     except:
         msg.body = render_template(template+'.txt', **kwargs)
+
     from app_file import flask_app
     thread = Thread(target=send_async_email, args=[flask_app, msg])
     thread.start()

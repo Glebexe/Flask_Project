@@ -5,18 +5,22 @@ from flask_bootstrap import Bootstrap4
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
 from flask_migrate import Migrate
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
 from authlib.integrations.flask_client import OAuth
 
 bootstrap = Bootstrap4()
 db = SQLAlchemy()
 mail = Mail()
 oauth = OAuth()
+admin = Admin()
 migrate = Migrate()
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
 
 
 def create_app(config_name='default'):
+
     flask_app = Flask(__name__)
     app_context = flask_app.app_context()
     app_context.push()
@@ -29,6 +33,13 @@ def create_app(config_name='default'):
     mail.init_app(flask_app)
     migrate.init_app(flask_app, db)
     oauth.init_app(flask_app)
+
+    from .models import Company, Job, Role, User, UserView, JobView
+    admin.init_app(flask_app)
+    admin.add_view(ModelView(Company, db.session))
+    admin.add_view(JobView(Job, db.session))
+    admin.add_view(ModelView(Role, db.session))
+    admin.add_view(UserView(User, db.session))
 
     from .main import main as main_bluprint
     flask_app.register_blueprint(main_bluprint)
